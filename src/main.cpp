@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
     Engine engine;
 
-    if (engine.Initialise("Terran Engine", 1920, 1080))
+    if (engine.Init("Terran Engine", 1920, 1080))
     {
         engine.Run();
     }

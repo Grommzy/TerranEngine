@@ -8,25 +8,17 @@ class Context;  // Forward declaration of Context
 class Window
 {
 public:
-    Window();
+    // Creates an SDL Window.
+    Window(const char* title, int width, int height, bool fullscreen = false);
+
+    // Clean up window pointer.
     ~Window();
 
-    // Creates an SDL Window without a rendering context.
-    bool Create(const char* title, int width, int height, bool fullscreen = false);
-
-    // Polls for OS messages (close, keyboard events, etc.)
-    void PollEvents();
-
-    // Returns true if the user has asked to close the window.
-    bool WillClose() const;
-
-    // Swaps the rendering buffers.
-    void SwapBuffer();
+    // Returns the internal SDL_Window
+    SDL_Window* GetSDLWindow();
 
 private:
     SDL_Window* window;
-    SDL_GLContext glContext;
-    bool isClosed;
 };
 
 #endif // WINDOW_H

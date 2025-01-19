@@ -2,7 +2,6 @@
 #define ENGINE_H
 
 #include <string>
-#include <vector>
 
 #include "engine/Window.h"
 
@@ -13,7 +12,7 @@ public:
     ~Engine();
 
     // Initialises the SDL Window, OpenGL context, etc.
-    bool Initialise(const std::string& windowTitle, int width, int height);
+    bool Init(const std::string& windowTitle, int width, int height);
 
     // The main loop. Updates and renders every frame.
     void Run();
