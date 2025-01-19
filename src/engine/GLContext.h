@@ -27,6 +27,9 @@
 class GLContext
 {
 public:
+    // Empty Constructor.
+    GLContext() {}
+
     // Creates the OpenGL Context for an associated window.
     GLContext(SDL_Window* associatedWindow);
 

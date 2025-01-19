@@ -4,6 +4,13 @@
 #include <stdexcept>
 #include <glad/glad.h>
 
+#include "engine/GLContext.h"
+
+Window::Window()
+{
+    window = nullptr;
+}
+
 Window::Window(const char* title, int width, int height, bool fullscreen)
 {
     // Set window flags to support OpenGL contexts and fullscreen/windowed.
@@ -19,8 +26,8 @@ Window::Window(const char* title, int width, int height, bool fullscreen)
         throw std::runtime_error("Failed to create SDL_Window: " + std::string(SDL_GetError()));
     }
 
-    // Set the viewport to match the created window.
-    glViewport(0, 0, width, height);
+    this->width = width;
+    this->height = height;
 }
 
 Window::~Window()
@@ -31,7 +38,27 @@ Window::~Window()
     }
 }
 
+bool Window::MakeCurrent(GLContext* context)
+{
+    if (!SDL_GL_MakeCurrent(this->GetSDLWindow(), context->GetContext()))
+    {
+        throw std::runtime_error("Failed to make window the current drawable surface: " + std::string(SDL_GetError()));
+    }
+
+    return true;
+}
+
 SDL_Window* Window::GetSDLWindow()
 {
     return window;
+}
+
+int Window::GetWidth()
+{
+    return width;
+}
+
+int Window::GetHeight()
+{
+    return height;
 }
