@@ -5,6 +5,7 @@
 
 #include "engine/Window.h"
 #include "engine/GLContext.h"
+#include "engine/EventManager.h"
 
 Engine::Engine()
 {
@@ -39,25 +40,39 @@ bool Engine::Init(const char* windowTitle, int width, int height)
 
 void Engine::Run()
 {
-    windows.at(0)->MakeCurrent(contexts[windows.at(0)]);
-    
+    EventManager eventManager;
+
     while (true)
     {
-        for (Window* window : windows)
+        if (!eventManager.PollEvents(windows))
+        {
+            break;
+        }
+
+        for (const auto& [windowID, window] : windows)
         {
             // Make the window the current drawable surface.
-            // Set the glViewport rendering portion to the whole window (fill the whole window)
+            // Set the glViewport rendering portion to the whole window (fill the whole window).
             window->MakeCurrent(contexts[window]);
             glViewport(0, 0, window->GetWidth(), window->GetHeight());
+
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            window->SwapBuffers();
         }
     }
+
+    // Once the user has requested to quit, clean up SDL.
+    SDL_Quit();
 }
 
 bool Engine::CreateWindow(const char* windowTitle, int width, int height)
 {
     // Create default drawable surface (window)
     Window* window = new Window(windowTitle, width, height);
-    windows.push_back(window);
+    SDL_WindowID windowID = window->GetWindowID();
+    windows.emplace(windowID, window);
 
     // Create the initial context, pointing to the window as the default drawable surface.
     GLContext* context = new GLContext(window->GetSDLWindow());

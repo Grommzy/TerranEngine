@@ -16,6 +16,7 @@ set(ENGINE_SRC
     src/engine/Window.cpp
     src/engine/Renderer.cpp
     src/engine/GLContext.cpp
+    src/engine/EventManager.cpp
 )
 
 # Collect external subdirectories

@@ -23,18 +23,18 @@ public:
     void Quit();
 
     bool CreateWindow(const char* windowTitle, int width, int height);
-    
-private:
-    void ProcessEvents();
 
 private:
     // Indicator that the engine is running.
     bool isRunning;
 
-    // List of all windows with OpenGL flags.
-    std::vector<Window*> windows;
+    // Reference to the currently focused window for event handling.
+    Window focusedWindow;
 
-    // GLContext.
+    // List of all windows with OpenGL flags.
+    std::map<SDL_WindowID, Window*> windows;
+
+    // List of GLContexts mapped to their default drawable surface.
     std::map<Window*, GLContext*> contexts;
 };
 

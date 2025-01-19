@@ -26,6 +26,7 @@ Window::Window(const char* title, int width, int height, bool fullscreen)
         throw std::runtime_error("Failed to create SDL_Window: " + std::string(SDL_GetError()));
     }
 
+    this->windowID = SDL_GetWindowID(window);
     this->width = width;
     this->height = height;
 }
@@ -48,17 +49,27 @@ bool Window::MakeCurrent(GLContext* context)
     return true;
 }
 
-SDL_Window* Window::GetSDLWindow()
+void Window::SwapBuffers()
+{
+    SDL_GL_SwapWindow(this->window);
+}
+
+SDL_Window* Window::GetSDLWindow() const
 {
     return window;
 }
 
-int Window::GetWidth()
+SDL_WindowID Window::GetWindowID() const
+{
+    return windowID;
+}
+
+int Window::GetWidth() const
 {
     return width;
 }
 
-int Window::GetHeight()
+int Window::GetHeight() const
 {
     return height;
 }
