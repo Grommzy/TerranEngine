@@ -1,0 +1,12 @@
+# Build Artefacts
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+
+# VSCode
+.vscode/
+
+# macOS & Windows
+.DS_Store
+Thumbs.db
