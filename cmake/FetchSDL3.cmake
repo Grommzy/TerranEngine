@@ -7,7 +7,7 @@ if(NOT TARGET SDL3::SDL3)
         GIT_TAG         main
         GIT_SHALLOW     TRUE
     )
-    set(SDL_STATIC      ${RF_STATIC_SDL})
+    set(SDL_STATIC      ${TE_STATIC_SDL})
     set(SDL_SHARED      ON)     # Both artefacts get built; we link the one we want.
     FetchContent_MakeAvailable(SDL3)
 endif()

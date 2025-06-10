@@ -6,7 +6,7 @@ project(Ramforge LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 # Build-Options
-include(cmake/Options.cmake) # Defines RF_ENABLE_GL_DEBUG, RF_STATIC_SDL, ...
+include(cmake/Options.cmake) # Defines TE_ENABLE_GL_DEBUG, TE_STATIC_SDL, ...
 
 # Ninja by default (unless generator already chosen)
 if (CMAKE_GENERATOR STREQUAL "Unix Makefiles" AND NOT DEFINED ENV{NINJA})
@@ -28,16 +28,16 @@ else()
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_definitions(RF_DEBUG=1)
+    add_compile_definitions(TE_DEBUG=1)
 endif()
 
 # Dependencies
 include(FetchContent)
 
 # --SDL3 (Dynamic by Default) (Helper module ensures that SDL3's upstream CMake exports only SDL3::SDL3 as static/shared naming conventions differ per platform)
-set(RF_SDL_SHARED ON CACHE BOOL "Build/Link SDL3 dynamically")
-if(RF_STATIC_SDL)
-    set(RF_SDL_SHARED OFF)
+set(TE_SDL_SHARED ON CACHE BOOL "Build/Link SDL3 dynamically")
+if(TE_STATIC_SDL)
+    set(TE_SDL_SHARED OFF)
 endif()
 
 include(cmake/FetchSDL3.cmake) # Guarantees SDL3::SDL3 target
