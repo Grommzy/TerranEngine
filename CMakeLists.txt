@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(Ramforge LANGUAGES CXX)
+project(TerranEngine LANGUAGES C CXX)
 
 # Put all runtime targets (EXE / DLL) in build/bin/
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -34,8 +34,9 @@ endif()
 # Dependencies
 include(FetchContent)
 
-# --SDL3 (Dynamic by Default) (Helper module ensures that SDL3's upstream CMake exports only SDL3::SDL3 as static/shared naming conventions differ per platform)
-set(TE_SDL_SHARED ON CACHE BOOL "Build/Link SDL3 dynamically")
+# --SDL3 Linkage Toggle (match variable names) (Helper module ensures that SDL3's upstream CMake exports only SDL3::SDL3 as static/shared naming conventions differ per platform)
+option(TE_STATIC_SDL "Link SDL3 statically" OFF)
+set(TE_SDL_SHARED ON)
 if(TE_STATIC_SDL)
     set(TE_SDL_SHARED OFF)
 endif()
@@ -45,14 +46,20 @@ include(cmake/FetchSDL3.cmake) # Guarantees SDL3::SDL3 target
 # --GLAD (Single Header + .c file)
 FetchContent_Declare(
     glad
-    GIT_REPOSITORY  https://github.com/Dav1dde/glad.git
-    GIT_TAG         v2.0.5  # Latest stable at time of writing
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG        v2.0.5
+    GIT_PROGRESS   TRUE
+    SOURCE_SUBDIR  cmake
 )
-
-set(GLAD_PROFILE "core")
-set(GLAD_API "gl=4.3")
-set(GLAD_GENERATOR "c")
 FetchContent_MakeAvailable(glad) # GLAD now available as target 'glad'
+
+glad_add_library(
+    glad_gl_core_43
+    STATIC
+    REPRODUCIBLE
+    LOADER
+    API gl:core=4.3
+)
 
 # --GLM and STB-Image (header-only)
 FetchContent_Declare(
