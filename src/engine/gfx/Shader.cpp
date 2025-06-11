@@ -132,4 +132,4 @@ namespace TerranEngine
     {
         glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix4[0][0]);
     }
-}
+} // TerranEngine namespace.

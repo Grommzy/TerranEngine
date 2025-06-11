@@ -1,5 +1,6 @@
 #include "engine/core/Application.h"
 #include "engine/gfx/Shader.h"
+#include "engine/gfx/Texture.h"
 
 int main()
 {
@@ -7,6 +8,9 @@ int main()
 
     TerranEngine::Shader shader("../../assets/shaders/test.vert", "../../assets/shaders/test.frag");
     shader.Use();
+
+    TerranEngine::Texture texture("../../assets/textures/ColourChecker.jpg");
+    texture.Bind(0);
 
     while (app.PumpEvents())
     {

@@ -6,6 +6,7 @@ target_sources(terranengine_engine
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Log.h
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Application.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Shader.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Texture.cpp
 )
 
 target_include_directories(

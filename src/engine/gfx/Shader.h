@@ -39,6 +39,6 @@ namespace TerranEngine
     private:
         GLuint programID {0};
     };
-}
+} // TerranEngine namespace.
 
 #endif // SHADER_H
