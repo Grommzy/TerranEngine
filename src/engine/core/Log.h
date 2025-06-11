@@ -73,8 +73,8 @@ namespace TerranEngine
                 << "\033[0m\n";
             out.flush();
         }
-    } // namespace Detail end.
-} // namespace TerranEngine end.
+    } // Detail namespace.
+} // TerranEngine namespace.
 
 #define TE_LOG_ERROR(format, ...) ::TerranEngine::Detail::Log(::TerranEngine::LogLevel::Error, (format), ##__VA_ARGS__)
 #define TE_LOG_WARN(format,  ...) ::TerranEngine::Detail::Log(::TerranEngine::LogLevel::Warn,  (format), ##__VA_ARGS__)

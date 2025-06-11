@@ -1,8 +1,24 @@
-#include "core/Log.h"
+#include "engine/core/Application.h"
+#include "engine/gfx/Shader.h"
 
 int main()
 {
-    TE_LOG_INFO("TerranEngine bootstrap v{}", "0.1.1");
-    TE_LOG_DEBUG("Screen size set to {}x{}", 480, 270);
+    TerranEngine::Application app;
+
+    TerranEngine::Shader shader("../../assets/shaders/test.vert", "../../assets/shaders/test.frag");
+    shader.Use();
+
+    while (app.PumpEvents())
+    {
+        app.BeginFrame();
+
+        /********************* Draw World *********************/
+        glClearColor(1.0f, 0.0f, 1.0f, 1.0f);   // Magenta test-clear.
+        glClear(GL_COLOR_BUFFER_BIT);
+        /***************** ^^^ Draw World ^^^ *****************/
+
+        app.EndFrame();
+    }
+    
     return 0;
 }

@@ -8,6 +8,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 # Build-Options
 include(cmake/Options.cmake) # Defines TE_ENABLE_GL_DEBUG, TE_STATIC_SDL, ...
 
+# Convert ON/OFF to 1/0 and expose options as definitions
+add_compile_definitions(
+    TE_ENABLE_GL_DEBUG=$<IF:$<BOOL:${TE_ENABLE_GL_DEBUG}>,1,0>
+    TE_LOG_LEVEL=${TE_LOG_LEVEL}
+)
+
 # Ninja by default (unless generator already chosen)
 if (CMAKE_GENERATOR STREQUAL "Unix Makefiles" AND NOT DEFINED ENV{NINJA})
     message(STATUS "Switching to Ninja generator")
