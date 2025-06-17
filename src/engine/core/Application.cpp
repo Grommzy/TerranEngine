@@ -98,6 +98,9 @@ namespace TerranEngine
     {
         glBindFramebuffer(GL_FRAMEBUFFER, nativeFBO);
         glViewport(0, 0, nativeWidth, nativeHeight);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void Application::EndFrame()
@@ -160,6 +163,9 @@ namespace TerranEngine
             std::abort();
         }
 
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+
         TE_LOG_INFO("OpenGL {}.{} initialised. Vendor: {}", 4, 3, reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
     }
 
@@ -178,6 +184,12 @@ namespace TerranEngine
         glGenFramebuffers(1, &nativeFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, nativeFBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, nativeTexture, 0);
+
+        GLuint rboDepth = 0;
+        glGenRenderbuffers(1, &rboDepth);
+        glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, nativeWidth, nativeHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
 
         if (glCheckFramebufferStatus(FramebufferTarget) != GL_FRAMEBUFFER_COMPLETE)
         {

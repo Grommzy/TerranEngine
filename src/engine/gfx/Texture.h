@@ -10,7 +10,7 @@ namespace TerranEngine
     class Texture
     {
     public:
-        Texture(std::string_view path, bool flipVertically = true);
+        Texture(std::string_view path, bool flipVertically = false);
         ~Texture();
 
         // Ensure that textures are non-copyable.

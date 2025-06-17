@@ -3,10 +3,16 @@ add_library(terranengine_game   INTERFACE)
 
 target_sources(terranengine_engine
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Log.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Time.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Application.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Shader.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Texture.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/SpriteBatch.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Camera2D.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/SpriteRenderer.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/AnimationSystem.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/level/TileParser.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/level/TileGrid.cpp
 )
 
 target_include_directories(
