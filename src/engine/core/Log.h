@@ -1,84 +1,117 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef TERRANENGINE_LOG_H
+#define TERRANENGINE_LOG_H
 
-#include <iostream>
+#ifndef TE_LOG_LEVEL
+    #define TE_LOG_LEVEL 3 // 0=Error, 1=Warn, 2=Info (Default), 3=Debug
+#endif
+
 #include <chrono>
 #include <format>
+#include <iostream>
 #include <string_view>
-
-// Compile-Time Log Level.
-#ifndef TE_LOG_LEVEL
-    #define TE_LOG_LEVEL 3      // 0=Error, 1=Warn, 2=Info (Default), 3=Debug
-#endif
 
 namespace TerranEngine
 {
+    /** Severity levels for logging. */
     enum class LogLevel : int
     {
-        Error = 0,
-        Warn = 1,
-        Info = 2,
-        Debug = 3
+        ERROR = 0,
+        WARN = 1,
+        INFO = 2,
+        DEBUG = 3
     };
 
     namespace Detail
     {
-        // Tag strings and ANSI colour codes (8-bit, reset = "\033[0m").
-        inline constexpr std::string_view LevelTag(LogLevel lvl)
+        /** Returns the ANSI colour code for a given log level. */
+        inline std::string_view LevelColour(const LogLevel level) noexcept
         {
-            switch (lvl)
+            switch (level)
             {
-                case LogLevel::Error:   return "ERROR";
-                case LogLevel::Warn:    return "WARN" ;
-                case LogLevel::Info:    return "INFO" ;
-                default:                return "DEBUG";
+                case LogLevel::ERROR: return "\033[1;31m"; // Red
+                case LogLevel::WARN:  return "\033[1;33m"; // Yellow
+                case LogLevel::INFO:  return "\033[1;32m"; // Green
+                case LogLevel::DEBUG: return "\033[1;34m"; // Blue
             }
+            return "\033[0m";
         }
 
-        inline constexpr std::string_view Colour(LogLevel lvl)
+        /** Returns the textual tag for a given log level. */
+        inline std::string_view LevelTag(const LogLevel level) noexcept
         {
-            switch (lvl)
+            switch (level)
             {
-                case LogLevel::Error:   return "\033[31m";  // Red
-                case LogLevel::Warn:    return "\033[33m";  // Yellow
-                case LogLevel::Info:    return "\033[36m";  // Cyan
-                default:                return "\033[90m";  // Bright grey
+                case LogLevel::ERROR: return "[ERROR]";
+                case LogLevel::WARN:  return "[WARN] ";
+                case LogLevel::INFO:  return "[INFO] ";
+                case LogLevel::DEBUG: return "[DEBUG]";
             }
+            return "[LOG]  ";
         }
 
-        // Log sink.
-        template <typename... Args>
-        inline void Log(LogLevel lvl, std::string_view format, Args &&... args)
+        /**
+         * Core logger implementation.
+         *
+         * Builds a formatted message prefixed by:
+         *  - ANSI colour escape
+         *  - [<microseconds since epoch>]
+         *  - level tag
+         * Then resets colour and flushes.
+         */
+        template<LogLevel level, typename... Args>
+        inline void Log(const std::string_view formatString, Args&&... args) noexcept
         {
-            if (static_cast<int>(lvl) > TE_LOG_LEVEL)
-            {
-                return;
-            }
-
-            // Timestep in microseconds since epoch.
             const auto now = std::chrono::system_clock::now();
-            const auto us  = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+            const auto ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
 
-            // Format message.
-            const std::string body = std::vformat(format, std::make_format_args(args...));
+            // Convert to local calender time.
+            std::time_t time = std::chrono::system_clock::to_time_t(now);
+            std::tm tmLoc {};
 
-            // Pick output stream
-            std::ostream& out = (lvl == LogLevel::Error || lvl == LogLevel::Warn) ? std::cerr : std::cout;
+            #if defined(_WIN32)
+                localtime_s(&tmLoc, &time); // Windows
+            #else
+                localtime_r(&time, &tmLoc); // POSIX
+            #endif
 
-            // Compose final line `[time] TAG message`
-            out << Colour(lvl)
-                << '[' << us << "] "
-                << LevelTag(lvl) << " "
-                << body
-                << "\033[0m\n";
-            out.flush();
+            // Build the time string. -------"HH:MM:SS"-----'.'-----------------------------------------"MsMsMs"------' '------------------------"PM/PM"
+            std::ostringstream timeStr;
+            timeStr << std::put_time(&tmLoc, "%I:%M:%S") << '.' << std::setw(3) << std::setfill('0') << ms.count() << ' ' << std::put_time(&tmLoc, "%p");
+
+            const std::string timeString = timeStr.str();
+
+            const std::string body = std::vformat(formatString, std::make_format_args(args...));
+
+            std::ostream& outStream = (level == LogLevel::ERROR ? std::cerr : std::cout);
+
+            outStream << LevelColour(level) << '[' << timeString << "] " << LevelTag(level) << ' ' << body << "\033[0m\n";
+            outStream.flush();
         }
-    } // Detail namespace.
-} // TerranEngine namespace.
+    }
 
-#define TE_LOG_ERROR(format, ...) ::TerranEngine::Detail::Log(::TerranEngine::LogLevel::Error, (format), ##__VA_ARGS__)
-#define TE_LOG_WARN(format,  ...) ::TerranEngine::Detail::Log(::TerranEngine::LogLevel::Warn,  (format), ##__VA_ARGS__)
-#define TE_LOG_INFO(format,  ...) ::TerranEngine::Detail::Log(::TerranEngine::LogLevel::Info,  (format), ##__VA_ARGS__)
-#define TE_LOG_DEBUG(format, ...) ::TerranEngine::Detail::Log(::TerranEngine::LogLevel::Debug, (format), ##__VA_ARGS__)
+    #if TE_LOG_LEVEL >= 0
+        #define TE_LOG_ERROR(format, ...) ::TerranEngine::Detail::Log<LogLevel::ERROR>(format, ##__VA_ARGS__)
+    #else
+        #define TE_LOG_ERROR(format, ...) ((void)0)
+    #endif
 
-#endif // LOG_H
+    #if TE_LOG_LEVEL >= 1
+        #define TE_LOG_WARN(format, ...) ::TerranEngine::Detail::Log<LogLevel::WARN>(format, ##__VA_ARGS__)
+    #else
+        #define TE_LOG_WARN(format, ...) ((void)0)
+    #endif
+
+    #if TE_LOG_LEVEL >= 2
+        #define TE_LOG_INFO(format, ...) ::TerranEngine::Detail::Log<LogLevel::INFO>(format, ##__VA_ARGS__)
+    #else
+        #define TE_LOG_INFO(format, ...) ((void)0)
+    #endif
+
+    #if TE_LOG_LEVEL >= 3
+        #define TE_LOG_DEBUG(format, ...) ::TerranEngine::Detail::Log<LogLevel::DEBUG>(format, ##__VA_ARGS__)
+    #else
+        #define TE_LOG_DEBUG(format, ...) ((void)0)
+    #endif
+}
+
+#endif // TERRANENGINE_LOG_H

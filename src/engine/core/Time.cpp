@@ -1,76 +1,61 @@
 #include "engine/core/Time.h"
-#include "engine/core/Log.h"
 
 namespace TerranEngine
 {
-    // --- Helper ------------------------------------
-    double Time::NowSeconds() const noexcept
+    using clock = std::chrono::high_resolution_clock;
+
+    void Time::Init() noexcept
     {
-        return static_cast<double>(SDL_GetTicks() / 1000.0);
+        startTime = clock::now();
+        lastTime  = startTime;
     }
 
-    // --- Constructor -------------------------------
-    Time::Time()
+    void Time::Tick() noexcept
     {
-        prevTime = NowSeconds();
-    }
+        clock::time_point now = clock::now();
+        std::chrono::duration<double> difference = now - lastTime;
+        lastTime = now;
 
-    // --- Public Interface --------------------------
-    void Time::StartFrame()
-    {
-        const double current = NowSeconds();
-        double delta = (current - prevTime) * timeScale;
+        // Apply time-scale to time-delta.
+        deltaTimeRaw = difference.count();
+        deltaTime    = difference.count() * timeScale;
 
-        // Clamp values to avoid spiral-of-death on long hitches.
-        if (delta > maxFrameDelta)
+        ++fpsFrameCount;
+        fpsTimer += deltaTimeRaw;
+        // Update the FPS timer every half-second.
+        if (fpsTimer >= 0.5)
         {
-            delta = maxFrameDelta;
+            const float currentFPS = static_cast<float>(fpsFrameCount / fpsTimer);
+            smoothedFPS = smoothedFPS * (1.0f - fpsAlpha) + currentFPS * fpsAlpha;
+            fpsFrameCount = 0;
+            fpsTimer      = 0.0;
         }
 
-        prevTime = current;
-        frameDelta = delta;
-        totalTime += delta;
-        accumulator += delta;
+        // Accumulate timesteps for fixed-step logic.
+        accumulator += difference.count();
+        fixedTickCount = 0;
 
-        // FPS EMA.
-        if (frameCounter == 0)
+        // Check for how many fixed-steps took place within the tick.
+        while (accumulator >= targetFixedDelta)
         {
-            fpsEMA = 1.0 / frameDelta;
+            accumulator -= targetFixedDelta;
+            ++fixedTickCount;
         }
-        else
-        {
-            const double instFPS = 1.0 / frameDelta;
-            fpsEMA = fpsSmoothing * fpsEMA + (1.0 - fpsSmoothing) * instFPS;
-        }
-
-        ++frameCounter;
     }
 
-    bool Time::StepFixed()
+    int Time::ConsumeFixedTicks() noexcept
     {
-        if (accumulator >= fixedStep)
-        {
-            accumulator -= fixedStep;
-            alpha = accumulator / fixedStep;
-            return true;
-        }
+        int count = fixedTickCount;
+        fixedTickCount = 0;
 
-        return false;
+        return count;
     }
 
-    void Time::SetTimeScale(float scale) noexcept
+    double Time::TotalTime() noexcept
     {
-        timeScale = scale < 0.0 ? 0.0 : scale;
+        std::chrono::duration<double> difference = lastTime - startTime;
+
+        return difference.count();
     }
 
-    void Time::Reset() noexcept
-    {
-        prevTime = NowSeconds();
-        accumulator = 0.0;
-        frameDelta = 0.0;
-        totalTime = 0.0;
-        frameCounter = 0;
-        fpsEMA = 0.0f;
-        alpha = 0.0;
-    }
 }

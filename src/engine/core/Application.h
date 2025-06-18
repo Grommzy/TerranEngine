@@ -1,62 +1,83 @@
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#ifndef TERRANENGINE_APPLICATION_H
+#define TERRANENGINE_APPLICATION_H
 
+#include <string_view>
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
 
-#include <string_view>
+#include "engine/core/Time.h"
+#include "engine/core/Log.h"
 
 namespace TerranEngine
 {
+    /** Root coordinator for game initialisation, main-loop, and shutdown. */
     class Application
     {
     public:
+
         struct Config
         {
-            int  nativeWidth   {480};
-            int  nativeHeight  {270};
-            int  windowWidth   {960};   // Initial window size (2x scale)
-            int  windowHeight  {540};   // Initial window size (2x scale)
-            bool resizable    {true};
-            std::string_view title {"TerranEngine Demo"};
+            int  nativeWidth   {480}; // Width in pixels.
+            int  nativeHeight  {270}; // Height in pixels.
+            int  windowWidth   {960}; // Resolution of window.
+            int  windowHeight  {540}; // Resolution of window.
+            bool resizable     {true};
+            std::string_view title {"TerranEngine"};
         };
 
-    public:
-        explicit Application(const Config& config); // Configured Constructor
-        Application() : Application(Config{}) {}    // Default Constructor
-        ~Application();                             // Destructor
-
-        // Ensure that the application is non-copyable.
         Application(const Application&)            = delete;
         Application& operator=(const Application&) = delete;
+        Application(Application&&)                 = delete;
+        Application& operator=(Application&&)      = delete;
 
-        bool PumpEvents();  // Returns false when user requests `Quit`.
-        void BeginFrame();  // Bind native FBO, set viewport.
-        void EndFrame();    // Blit to screen, swap buffers.
+        ~Application() { Shutdown(); }
 
-        [[nodiscard]] float DeltaTime() const noexcept { return deltaTime; }
+        /** Construct TerranEngine with desired window size and title. */
+        explicit Application(const Config& config) noexcept;
+
+        /** GCC Bug requires this vestigial default constructor */
+        Application() : Application(Config{}) {}
+
+        /** Enter the main loop. Returns when game has been quit. */
+        void Run() noexcept;
+
+        /** Tear down subsystems. */
+        void Shutdown() noexcept;
+
+        /** Returns true if the Application is running. */
+        [[nodiscard]] bool IsRunning() const noexcept { return running; }
+
+        /** TODO: Reroute this functionality into a dedicated rendering system. */
+        void BeginFrame() noexcept;
+        void EndFrame()   noexcept;
 
     private:
+        /** Per-frame updates. */
+        void Tick() noexcept;
+
+        /** TODO: TEMPORARILY handle SDL events before EventManager. */
+        void PollEvents() noexcept;
+
         void CreateWindow(const Config& config);
         void CreateGLContext();
         void CreateNativeFramebuffer(int width, int height);
         void SetupGLDebugCallback();
 
     private:
-        SDL_Window* window      {nullptr};
+        // --- Window state --- //
+        SDL_Window*   window    {nullptr};
         SDL_GLContext glContext {nullptr};
 
-        GLuint nativeFBO     {0};
-        GLuint nativeTexture {0};
+        GLuint nativeFBO {0};
+        GLuint nativeTex {0};
 
         int nativeWidth  {0};
         int nativeHeight {0};
         int windowWidth  {0};
         int windowHeight {0};
 
-        uint64_t prevTicks {0};
-        double   deltaTime {0.0};
+        bool running {false};
     };
-} // TerranEngine namespace.
+}
 
-#endif //APPLICATION_H
+#endif // TERRANENGINE_APPLICATION_H
