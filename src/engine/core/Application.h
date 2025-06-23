@@ -7,6 +7,7 @@
 
 #include "engine/core/Time.h"
 #include "engine/core/Log.h"
+#include "engine/ecs/world/World.h"
 
 namespace TerranEngine
 {
@@ -14,7 +15,6 @@ namespace TerranEngine
     class Application
     {
     public:
-
         struct Config
         {
             int  nativeWidth   {480}; // Width in pixels.
@@ -37,6 +37,11 @@ namespace TerranEngine
 
         /** GCC Bug requires this vestigial default constructor */
         Application() : Application(Config{}) {}
+
+        /** Grab the world from the Application. */
+        [[nodiscard]] World& GetWorld() noexcept { return *world; }
+
+        void SetActiveWorld(std::unique_ptr<World> world) noexcept { this->world = std::move(world); }
 
         /** Enter the main loop. Returns when game has been quit. */
         void Run() noexcept;
@@ -77,6 +82,8 @@ namespace TerranEngine
         int windowHeight {0};
 
         bool running {false};
+
+        std::unique_ptr<World> world;
     };
 }
 

@@ -1,5 +1,7 @@
 #include "engine/core/Application.h"
 
+#include "engine/ecs/ScriptSystem.h"
+
 #include <algorithm>
 
 /** Activate OpenGL Debug Callbacks if enabled in the build configuration.
@@ -29,6 +31,10 @@ namespace TerranEngine
 {
     Application::Application(const Config& config) noexcept
     {
+        world = std::make_unique<World>();
+
+        world->AddSystem<ScriptSystem>();
+
         CreateWindow(config);
         CreateGLContext();
         CreateNativeFramebuffer(config.nativeWidth, config.nativeHeight);
@@ -59,7 +65,8 @@ namespace TerranEngine
     void Application::Tick() noexcept
     {
         Time::Tick();
-        TE_LOG_DEBUG("FPS: {}", Time::FPS());
+        world->UpdateSystems(Time::DeltaTime());
+        // TE_LOG_DEBUG("FPS: {}", Time::FPS());
         PollEvents();
     }
 

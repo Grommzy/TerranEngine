@@ -90,25 +90,25 @@ namespace TerranEngine
     }
 
     #if TE_LOG_LEVEL >= 0
-        #define TE_LOG_ERROR(format, ...) ::TerranEngine::Detail::Log<LogLevel::ERROR>(format, ##__VA_ARGS__)
+        #define TE_LOG_ERROR(format, ...) ::TerranEngine::Detail::Log<TerranEngine::LogLevel::ERROR>(format, ##__VA_ARGS__)
     #else
         #define TE_LOG_ERROR(format, ...) ((void)0)
     #endif
 
     #if TE_LOG_LEVEL >= 1
-        #define TE_LOG_WARN(format, ...) ::TerranEngine::Detail::Log<LogLevel::WARN>(format, ##__VA_ARGS__)
+        #define TE_LOG_WARN(format, ...) ::TerranEngine::Detail::Log<TerranEngine::LogLevel::WARN>(format, ##__VA_ARGS__)
     #else
         #define TE_LOG_WARN(format, ...) ((void)0)
     #endif
 
     #if TE_LOG_LEVEL >= 2
-        #define TE_LOG_INFO(format, ...) ::TerranEngine::Detail::Log<LogLevel::INFO>(format, ##__VA_ARGS__)
+        #define TE_LOG_INFO(format, ...) ::TerranEngine::Detail::Log<TerranEngine::LogLevel::INFO>(format, ##__VA_ARGS__)
     #else
         #define TE_LOG_INFO(format, ...) ((void)0)
     #endif
 
     #if TE_LOG_LEVEL >= 3
-        #define TE_LOG_DEBUG(format, ...) ::TerranEngine::Detail::Log<LogLevel::DEBUG>(format, ##__VA_ARGS__)
+        #define TE_LOG_DEBUG(format, ...) ::TerranEngine::Detail::Log<TerranEngine::LogLevel::DEBUG>(format, ##__VA_ARGS__)
     #else
         #define TE_LOG_DEBUG(format, ...) ((void)0)
     #endif
