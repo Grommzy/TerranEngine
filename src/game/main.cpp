@@ -6,6 +6,7 @@
 #include "engine/ecs/System.h"
 #include "engine/ecs/Behaviour.h"
 #include "game/TestBehaviour.h"
+#include "game/TestCameraBehaviour.h"
 
 int main()
 {
@@ -17,9 +18,10 @@ int main()
 
     Texture* atlas = new Texture("../../assets/textures/Font Tileset.png");
 
-    Camera2D& camera = app.Camera();
-
-    camera.SetPosition({0.0f, -3.0f});
+    Entity camera = app.GetWorld().CreateEntity();
+    app.GetWorld().AddComponent<Transform2D>(camera, Transform2D{{0.0f, 0.0f}});
+    app.GetWorld().AddComponent<Camera2D>(camera, Camera2D{config.nativeWidth, config.nativeHeight});
+    app.GetWorld().AddComponent<BehaviourComponent>(camera, std::make_unique<TestCameraBehaviour>());
 
     Entity entity0 = app.GetWorld().CreateEntity();
     Entity entity1 = app.GetWorld().CreateEntity();

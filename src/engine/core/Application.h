@@ -8,7 +8,6 @@
 #include "engine/core/Config.h"
 #include "engine/ecs/world/World.h"
 #include "engine/gfx/WindowManager.h"
-#include "engine/gfx/Camera2D.h"
 
 namespace TerranEngine
 {
@@ -31,8 +30,6 @@ namespace TerranEngine
 
         /** Grab the world from the Application. */
         [[nodiscard]] World& GetWorld() noexcept { return *world; }
-        
-        [[nodiscard]] Camera2D& Camera() noexcept { return camera; }
 
         void SetActiveWorld(std::unique_ptr<World> world) noexcept { this->world = std::move(world); }
 
@@ -55,7 +52,6 @@ namespace TerranEngine
     private:
         // --- Window state --- //
         WindowManager          windowManager;
-        Camera2D               camera;
         std::unique_ptr<World> world;
 
         bool running {false};

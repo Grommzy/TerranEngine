@@ -45,7 +45,7 @@ namespace TerranEngine
         currentTexture = &atlas;
         shader.Use();
         shader.SetUniform("uTexture0", 0);
-        shader.SetUniform("uTransform", camera.ViewProjectionMatrix());
+        shader.SetUniform("uTransform", camera.viewProjection);
 
         vertices.clear();
         indices.clear();

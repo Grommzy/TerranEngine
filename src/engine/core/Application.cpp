@@ -1,13 +1,14 @@
 #include "engine/core/Application.h"
 
 #include "engine/ecs/ScriptSystem.h"
+#include "engine/ecs/CameraSystem.h"
 #include "engine/gfx/SpriteRenderer.h"
 
 #include <algorithm>
 
 namespace TerranEngine
 {
-    Application::Application(const Config& config) noexcept : camera(config.nativeWidth, config.nativeHeight)
+    Application::Application(const Config& config) noexcept
     {
         if (!windowManager.Initialise(config))
         {
@@ -18,7 +19,8 @@ namespace TerranEngine
         world = std::make_unique<World>();
 
         world->AddSystem<ScriptSystem>();
-        world->AddSystem<SpriteRenderer>(SystemPhase::RENDER, 0, camera);
+        world->AddSystem<SpriteRenderer>(SystemPhase::RENDER, 0);
+        world->AddSystem<CameraSystem>(SystemPhase::UPDATE, 0, windowManager);
 
         Time::Init();
         running = true;
@@ -45,7 +47,6 @@ namespace TerranEngine
 
         windowManager.BeginFrame();
 
-        camera.ResizeViewport(windowManager.ViewportWidth(), windowManager.ViewportHeight());
         world->UpdateSystems(deltaTime);
         windowManager.EndFrame();
 

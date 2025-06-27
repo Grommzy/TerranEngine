@@ -26,6 +26,17 @@ namespace TerranEngine
         glm::vec2 origin       {0.5f, 0.5f};             // Pivot point for rotation and scaling. Range 0-1
         int32_t zLevel         {0};                      // Z-layer of the sprite. 0 = mid-layer.
     };
+
+    struct Camera2D
+    {
+        int targetWidth          {320};
+        int targetHeight         {240};
+        int viewportWidth        {320};
+        int viewportHeight       {240};
+        glm::mat4 viewProjection {1.0f};
+
+        bool primary             {true};
+    };
 }
 
 #endif // TERRANENGINE_COMPONENTS_H

@@ -14,19 +14,25 @@ inline glm::vec2 RotateVec2(const glm::vec2& vector, float radians) noexcept
 
 namespace TerranEngine
 {
-    SpriteRenderer::SpriteRenderer(const Camera2D& camera) : camera(camera) {}
-
     void SpriteRenderer::Update(World& world, float)
     {
+        Camera2D* currentCamera = nullptr;
+        world.ForEach<Camera2D>([&](Entity, Camera2D& camera)
+        {
+            if (!currentCamera || camera.primary) { currentCamera = &camera; }
+        });
+
+        if (!currentCamera) { return; }
+
         // 1. Push the sprite quads for each component into the correct batch.
-        world.ForEach<Transform2D, Sprite>([this](Entity, Transform2D& transform, Sprite& sprite)
+        world.ForEach<Transform2D, Sprite>([this, currentCamera](Entity, Transform2D& transform, Sprite& sprite)
         {
             if (!sprite.texture) { return; }
 
             BatchEntry& batchEntry = batchMap[sprite.texture];
             if (!batchEntry.beganThisFrame)
             {
-                batchEntry.batch.Begin(*sprite.texture, camera); 
+                batchEntry.batch.Begin(*sprite.texture, *currentCamera);
                 batchEntry.beganThisFrame = true;
             }
 

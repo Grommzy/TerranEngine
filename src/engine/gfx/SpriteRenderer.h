@@ -2,7 +2,6 @@
 #define TERRANENGINE_SPRITERENDERER_H
 
 #include "engine/ecs/System.h"
-#include "engine/gfx/Camera2D.h"
 #include "engine/gfx/SpriteBatch.h"
 #include "engine/ecs/Components.h"
 #include "engine/ecs/world/World.h"
@@ -14,7 +13,7 @@ namespace TerranEngine
     class SpriteRenderer final : public System
     {
     public:
-        SpriteRenderer(const Camera2D& camera);
+        SpriteRenderer() = default;
 
         void Update(World& world, float deltaTime) override;
 
@@ -28,7 +27,6 @@ namespace TerranEngine
         void SubmitSprite(BatchEntry& entry, const Transform2D& transform, const Sprite& sprite);
 
     private:
-        const Camera2D& camera;
         std::unordered_map<const Texture*, BatchEntry> batchMap;
     };
 }
