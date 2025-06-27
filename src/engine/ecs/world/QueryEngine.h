@@ -11,13 +11,10 @@ namespace TerranEngine
         explicit QueryEngine(ComponentManager& componentManager) : components(componentManager) {}
 
         /** Function/Lambda `must` parse Entity first, and then non-const references to the components in the same order that they were given in the template list. */
-        template<typename... Components, typename Function>
+        template<typename Lead, typename... Rest, typename Function>
         void ForEach(Function&& function)
         {
-            static_assert((sizeof...(Components) > 0), "ForEach needs at least one component type.");
-
-            // Pick the 0th entry in the list of parsed heterogenous components.
-            using Lead = std::tuple_element_t<0, std::tuple<Components...>>;
+            static_assert((sizeof...(Rest) >= 0), "ForEach needs at least one component type.");
 
             auto* leadPool = components.GetPool<Lead>();
             if (!leadPool) { return; }
@@ -29,16 +26,16 @@ namespace TerranEngine
             {
                 Entity entity {entityIDs[i]};
 
-                if constexpr (sizeof...(Components) == 1)
+                if constexpr (sizeof...(Rest) == 0)
                 {
                     // Faster way of doing it for single-component cases.
                     if (components.Has<Lead>(entity)) { function(entity, const_cast<Lead&>(dense[i])); }
                 }
                 else
                 {
-                    if ((components.Has<Components>(entity) && ...))
+                    if ((components.Has<Rest>(entity) && ...))
                     {
-                        function(entity, const_cast<Lead&>(dense[i]), *components.Get<Components>(entity)...);
+                        function(entity, const_cast<Lead&>(dense[i]), *components.Get<Rest>(entity)...);
                     }
                 }
             }

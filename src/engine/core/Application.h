@@ -1,13 +1,14 @@
 #ifndef TERRANENGINE_APPLICATION_H
 #define TERRANENGINE_APPLICATION_H
 
-#include <string_view>
-#include <SDL3/SDL.h>
-#include <glad/gl.h>
+#include <memory>
 
 #include "engine/core/Time.h"
 #include "engine/core/Log.h"
+#include "engine/core/Config.h"
 #include "engine/ecs/world/World.h"
+#include "engine/gfx/WindowManager.h"
+#include "engine/gfx/Camera2D.h"
 
 namespace TerranEngine
 {
@@ -15,16 +16,6 @@ namespace TerranEngine
     class Application
     {
     public:
-        struct Config
-        {
-            int  nativeWidth   {480}; // Width in pixels.
-            int  nativeHeight  {270}; // Height in pixels.
-            int  windowWidth   {960}; // Resolution of window.
-            int  windowHeight  {540}; // Resolution of window.
-            bool resizable     {true};
-            std::string_view title {"TerranEngine"};
-        };
-
         Application(const Application&)            = delete;
         Application& operator=(const Application&) = delete;
         Application(Application&&)                 = delete;
@@ -40,6 +31,8 @@ namespace TerranEngine
 
         /** Grab the world from the Application. */
         [[nodiscard]] World& GetWorld() noexcept { return *world; }
+        
+        [[nodiscard]] Camera2D& Camera() noexcept { return camera; }
 
         void SetActiveWorld(std::unique_ptr<World> world) noexcept { this->world = std::move(world); }
 
@@ -52,10 +45,6 @@ namespace TerranEngine
         /** Returns true if the Application is running. */
         [[nodiscard]] bool IsRunning() const noexcept { return running; }
 
-        /** TODO: Reroute this functionality into a dedicated rendering system. */
-        void BeginFrame() noexcept;
-        void EndFrame()   noexcept;
-
     private:
         /** Per-frame updates. */
         void Tick() noexcept;
@@ -63,27 +52,13 @@ namespace TerranEngine
         /** TODO: TEMPORARILY handle SDL events before EventManager. */
         void PollEvents() noexcept;
 
-        void CreateWindow(const Config& config);
-        void CreateGLContext();
-        void CreateNativeFramebuffer(int width, int height);
-        void SetupGLDebugCallback();
-
     private:
         // --- Window state --- //
-        SDL_Window*   window    {nullptr};
-        SDL_GLContext glContext {nullptr};
-
-        GLuint nativeFBO {0};
-        GLuint nativeTex {0};
-
-        int nativeWidth  {0};
-        int nativeHeight {0};
-        int windowWidth  {0};
-        int windowHeight {0};
+        WindowManager          windowManager;
+        Camera2D               camera;
+        std::unique_ptr<World> world;
 
         bool running {false};
-
-        std::unique_ptr<World> world;
     };
 }
 

@@ -5,9 +5,17 @@ target_sources(terranengine_engine
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Time.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Application.cpp
+
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/world/EntityManager.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/world/SystemScheduler.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/ScriptSystem.cpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Texture.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Shader.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/Camera2D.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/SpriteBatch.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/SpriteRenderer.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/gfx/WindowManager.cpp
 )
 
 target_include_directories(

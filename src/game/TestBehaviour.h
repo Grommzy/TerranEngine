@@ -17,7 +17,7 @@ public:
     void Update(float deltaTime) override
     {
         transform->position.x += 10.0f * deltaTime;
-        TE_LOG_DEBUG("Entity Index '{}' | Generation '{}' at position.x '{}'", entity.Index(), entity.Generation(), transform->position.x);
+        //TE_LOG_DEBUG("Entity Index '{}' | Generation '{}' at position.x '{}'", entity.Index(), entity.Generation(), transform->position.x);
     }
 
 private:
