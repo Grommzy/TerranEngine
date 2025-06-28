@@ -5,6 +5,7 @@ target_sources(terranengine_engine
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Time.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Application.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/core/Input.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/world/EntityManager.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/world/SystemScheduler.cpp

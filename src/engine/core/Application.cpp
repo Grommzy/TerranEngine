@@ -1,5 +1,6 @@
 #include "engine/core/Application.h"
 
+#include "engine/core/Input.h"
 #include "engine/ecs/world/HierarchySystem.h"
 #include "engine/ecs/ScriptSystem.h"
 #include "engine/ecs/CameraSystem.h"
@@ -48,18 +49,20 @@ namespace TerranEngine
         const float deltaTime = Time::DeltaTime();
 
         windowManager.BeginFrame();
-
         world->UpdateSystems(deltaTime);
         windowManager.EndFrame();
 
-        
+        Input::NewFrame();
     }
 
     void Application::PollEvents() noexcept
     {
         SDL_Event event;
+
         while (SDL_PollEvent(&event))
         {
+            Input::OnSDLEvent(event);
+            
             switch (event.type)
             {
                 case SDL_EVENT_QUIT: { running = false; break; }

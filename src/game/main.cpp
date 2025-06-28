@@ -12,7 +12,7 @@ int main()
 {
     using namespace TerranEngine;
 
-    Config config("Terran Engine", 64, 64, (64 * 10), (64 * 13), false, false, true);
+    Config config("Terran Engine", 64, 64, (64 * 24), (64 * 20), false, false, true);
 
     Application app(config);
 
