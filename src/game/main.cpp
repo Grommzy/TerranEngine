@@ -2,7 +2,7 @@
 #include "engine/core/Application.h"
 #include "engine/core/Config.h"
 #include "engine/ecs/world/World.h"
-#include "engine/ecs/Components.h"
+#include "engine/ecs/components/Components.h"
 #include "engine/ecs/System.h"
 #include "engine/ecs/Behaviour.h"
 #include "game/TestBehaviour.h"
@@ -24,17 +24,20 @@ int main()
     app.GetWorld().AddComponent<BehaviourComponent>(camera, std::make_unique<TestCameraBehaviour>());
 
     Entity entity0 = app.GetWorld().CreateEntity();
-    Entity entity1 = app.GetWorld().CreateEntity();
     app.GetWorld().AddComponent<Transform2D>(entity0, Transform2D{{0.0f, 0.0f}, {1.0f, 1.0f}, 0});
     app.GetWorld().AddComponent<BehaviourComponent>(entity0, std::make_unique<TestBehaviour>());
+
+    Entity entity1 = app.GetWorld().CreateEntity();
     app.GetWorld().AddComponent<Transform2D>(entity1, Transform2D{{6.0f, 0.0f}, {1.0f, 1.0f}, 0});
     app.GetWorld().AddComponent<BehaviourComponent>(entity1, std::make_unique<TestBehaviour>());
     app.GetWorld().AddComponent<Sprite>(entity1, Sprite{atlas, {6.0f, 6.0f}, 8});
+    
     app.GetWorld().DestroyEntity(entity0);
+
     entity0 = app.GetWorld().CreateEntity();
     app.GetWorld().AddComponent<Transform2D>(entity0, Transform2D{{0.0f, 0.0f}, {1.0f, 1.0f}, 0});
     app.GetWorld().AddComponent<Sprite>(entity0, Sprite{atlas, {6.0f, 6.0f}, 7});
-    app.GetWorld().AddComponent<BehaviourComponent>(entity0, std::make_unique<TestBehaviour>());
+    app.GetWorld().AddComponent<Relationship>(entity0, Relationship {entity1, {-6.0f, 0.0f}, true, false});
 
     app.Run();
     return 0;

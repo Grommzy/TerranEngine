@@ -8,6 +8,7 @@ target_sources(terranengine_engine
 
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/world/EntityManager.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/world/SystemScheduler.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/world/HierarchySystem.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/ScriptSystem.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/ecs/CameraSystem.cpp
 

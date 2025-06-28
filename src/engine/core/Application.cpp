@@ -1,5 +1,6 @@
 #include "engine/core/Application.h"
 
+#include "engine/ecs/world/HierarchySystem.h"
 #include "engine/ecs/ScriptSystem.h"
 #include "engine/ecs/CameraSystem.h"
 #include "engine/gfx/SpriteRenderer.h"
@@ -18,6 +19,7 @@ namespace TerranEngine
 
         world = std::make_unique<World>();
 
+        world->AddSystem<HierarchySystem>();
         world->AddSystem<ScriptSystem>();
         world->AddSystem<SpriteRenderer>(SystemPhase::RENDER, 0);
         world->AddSystem<CameraSystem>(SystemPhase::UPDATE, 0, windowManager);

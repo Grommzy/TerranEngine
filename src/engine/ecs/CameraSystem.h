@@ -3,7 +3,7 @@
 
 #include "engine/gfx/WindowManager.h"
 #include "engine/ecs/System.h"
-#include "engine/ecs/Components.h"
+#include "engine/ecs/components/Components.h"
 
 namespace TerranEngine
 {

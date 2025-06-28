@@ -3,7 +3,7 @@
 
 #include "engine/ecs/Behaviour.h"
 #include "engine/ecs/world/World.h"
-#include "engine/ecs/Components.h"
+#include "engine/ecs/components/Components.h"
 
 class TestCameraBehaviour : public TerranEngine::Behaviour
 {

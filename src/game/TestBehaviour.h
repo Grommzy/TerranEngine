@@ -4,7 +4,7 @@
 #include "engine/core/Log.h"
 #include "engine/ecs/Behaviour.h"
 #include "engine/ecs/world/World.h"
-#include "engine/ecs/Components.h"
+#include "engine/ecs/components/Components.h"
 
 class TestBehaviour : public TerranEngine::Behaviour
 {

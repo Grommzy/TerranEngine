@@ -3,7 +3,7 @@
 
 #include "engine/gfx/Shader.h"
 #include "engine/gfx/Texture.h"
-#include "engine/ecs/Components.h"
+#include "engine/ecs/components/Components.h"
 
 #include <glm/glm.hpp>
 #include <glad/gl.h>

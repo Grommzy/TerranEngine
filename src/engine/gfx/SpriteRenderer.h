@@ -3,7 +3,7 @@
 
 #include "engine/ecs/System.h"
 #include "engine/gfx/SpriteBatch.h"
-#include "engine/ecs/Components.h"
+#include "engine/ecs/components/Components.h"
 #include "engine/ecs/world/World.h"
 
 #include <unordered_map>
