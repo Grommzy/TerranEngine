@@ -7,16 +7,18 @@
 #include "engine/ecs/Behaviour.h"
 #include "game/TestBehaviour.h"
 #include "game/TestCameraBehaviour.h"
+#include "game/MapParser.h"
 
 int main()
 {
     using namespace TerranEngine;
 
-    Config config("Terran Engine", 64, 64, (64 * 24), (64 * 20), false, false, true);
+    Config config("Terran Engine", 128 * 4, 128 * 3, 1920, 1080, false, false, false, true);
 
     Application app(config);
 
     Texture* atlas = new Texture("../../assets/textures/Font Tileset.png");
+    Texture* mapAtlas = new Texture("../../assets/textures/Template Tileset.png");
 
     Entity camera = app.GetWorld().CreateEntity();
     app.GetWorld().AddComponent<Transform2D>(camera, Transform2D{{0.0f, 0.0f}});
@@ -38,6 +40,16 @@ int main()
     app.GetWorld().AddComponent<Transform2D>(entity0, Transform2D{{0.0f, 0.0f}, {1.0f, 1.0f}, 0});
     app.GetWorld().AddComponent<Sprite>(entity0, Sprite{atlas, {6.0f, 6.0f}, 7});
     app.GetWorld().AddComponent<Relationship>(entity0, Relationship {entity1, {-6.0f, 0.0f}, true, false});
+
+    BlackHoleChest::Map map;
+    BlackHoleChest::MapParser::ParseMap("../../assets/maps/format.map", map);
+
+    for (size_t i = 0; i < static_cast<size_t>(map.mapTiles.size()); ++i)
+    {
+        Entity tile = app.GetWorld().CreateEntity();
+        app.GetWorld().AddComponent<Transform2D>(tile, Transform2D{{(i / map.width) * 16, (i % map.width) * 16}});
+        app.GetWorld().AddComponent<Sprite>(tile, Sprite{mapAtlas, {16.0f, 16.0f}, map.mapTiles[i]});
+    }
 
     app.Run();
     return 0;

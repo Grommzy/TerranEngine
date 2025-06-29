@@ -18,10 +18,10 @@ public:
 
     void Update(float deltaTime) override
     {
-        if (Input::IsDown(Key::W)) { transform->position.y += 16.0f * deltaTime; }
-        if (Input::IsDown(Key::A)) { transform->position.x -= 16.0f * deltaTime; }
-        if (Input::IsDown(Key::S)) { transform->position.y -= 16.0f * deltaTime; }
-        if (Input::IsDown(Key::D)) { transform->position.x += 16.0f * deltaTime; }
+        if (Input::IsDown(Key::W)) { transform->position.y += 48.0f * deltaTime; }
+        if (Input::IsDown(Key::A)) { transform->position.x -= 48.0f * deltaTime; }
+        if (Input::IsDown(Key::S)) { transform->position.y -= 48.0f * deltaTime; }
+        if (Input::IsDown(Key::D)) { transform->position.x += 48.0f * deltaTime; }
     }
 
 private:

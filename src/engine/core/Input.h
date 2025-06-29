@@ -26,26 +26,49 @@ namespace TerranEngine
         Count
     };
 
+    enum class MouseButton : uint8_t
+    {
+        Left, Right, Middle, X1, X2,
+
+        Count
+    };
+
+    struct MouseState
+    {
+        glm::ivec2 position   {0, 0};
+        glm::ivec2 delta      {0, 0};
+        glm::ivec2 wheelDelta {0, 0};
+        std::bitset<(size_t)MouseButton::Count> current, previous;
+
+        [[nodiscard]] bool IsDown(MouseButton button)      const noexcept { return current.test((size_t)button); }
+        [[nodiscard]] bool WasPressed(MouseButton button)  const noexcept { return current.test((size_t)button) && !previous.test((size_t)button); }
+        [[nodiscard]] bool WasReleased(MouseButton button) const noexcept { return !current.test((size_t)button) && previous.test((size_t)button); }
+    };
+
     class Input
     {
     public:
         static void OnSDLEvent(const SDL_Event& event);
         static void NewFrame() noexcept;
 
-        static bool IsDown(Key key)       noexcept { return  current.test((size_t)key); }
-        static bool WasPressed(Key key)   noexcept { return  current.test((size_t)key) && !previous.test((size_t)key); }
-        static bool WasReleased(Key key)  noexcept { return !current.test((size_t)key) && previous.test((size_t)key); }
+        [[nodiscard]] static bool IsDown(Key key)       noexcept { return  keyboardCurrent.test((size_t)key); }
+        [[nodiscard]] static bool WasPressed(Key key)   noexcept { return  keyboardCurrent.test((size_t)key) && !keyboardPrevious.test((size_t)key); }
+        [[nodiscard]] static bool WasReleased(Key key)  noexcept { return !keyboardCurrent.test((size_t)key) && keyboardPrevious.test((size_t)key); }
 
-        static glm::ivec2 MousePosition() noexcept { return mouse; }
-        static glm::ivec2 MouseDelta()    noexcept { return mouseDelta; }
+        [[nodiscard]] static glm::ivec2 MousePosition() noexcept { return mouse.position; }
+        [[nodiscard]] static glm::ivec2 MouseDelta()    noexcept { return mouse.delta; }
+        [[nodiscard]] static glm::ivec2 WheelDelta()    noexcept { return mouse.wheelDelta; }
+        [[nodiscard]] static bool IsMouseDown(MouseButton button)      noexcept { return mouse.IsDown(button); }
+        [[nodiscard]] static bool WasMousePressed(MouseButton button)  noexcept { return mouse.WasPressed(button); }
+        [[nodiscard]] static bool WasMouseReleased(MouseButton button) noexcept { return mouse.WasReleased(button); }
 
     private:
         [[nodiscard]] static Key FromSDLScancode(SDL_Scancode scanCode);
+        [[nodiscard]] static MouseButton FromSDLButton(uint8_t button);
 
     private:
-        inline static std::bitset<(size_t)Key::Count> current, previous;
-        inline static glm::ivec2 mouse      {0, 0};
-        inline static glm::ivec2 mouseDelta {0, 0};
+        inline static std::bitset<(size_t)Key::Count> keyboardCurrent, keyboardPrevious; // Keyboard
+        inline static MouseState mouse;                                  // Mouse
     };
 }
 

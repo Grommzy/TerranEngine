@@ -26,7 +26,7 @@ namespace TerranEngine
         #endif
 
         // Create window.
-        Uint32 windowFlags = SDL_WINDOW_OPENGL | (config.resizable ? SDL_WINDOW_RESIZABLE : 0);
+        Uint32 windowFlags = SDL_WINDOW_OPENGL | (config.resizable ? SDL_WINDOW_RESIZABLE : 0) | (config.fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 
         window = SDL_CreateWindow(config.title.c_str(), config.windowWidth, config.windowHeight, windowFlags);
         if (!window)

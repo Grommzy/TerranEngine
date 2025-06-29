@@ -49,6 +49,20 @@ namespace TerranEngine
         return scancode < scancodeLUT.size() ? scancodeLUT[scancode] : Key::Count;
     }
 
+    inline MouseButton Input::FromSDLButton(uint8_t button)
+    {
+        switch (button)
+        {
+            case SDL_BUTTON_LEFT:   { return MouseButton::Left;   }
+            case SDL_BUTTON_RIGHT:  { return MouseButton::Right;  }
+            case SDL_BUTTON_MIDDLE: { return MouseButton::Middle; }
+            case SDL_BUTTON_X1:     { return MouseButton::X1;     }
+            case SDL_BUTTON_X2:     { return MouseButton::X2;     }
+
+            default:                { return MouseButton::Count;  }
+        }
+    }
+
     void Input::OnSDLEvent(const SDL_Event& event)
     {
         switch (event.type)
@@ -56,21 +70,41 @@ namespace TerranEngine
             case SDL_EVENT_KEY_DOWN:
             {
                 Key key = FromSDLScancode(event.key.scancode);
-                if (key != Key::Count) current.set((size_t)key, true);
+                if (key != Key::Count) { keyboardCurrent.set((size_t)key, true); }
                 break;
             }
 
             case SDL_EVENT_KEY_UP:
             {
                 Key key = FromSDLScancode(event.key.scancode);
-                if (key != Key::Count) current.set((size_t)key, false);
+                if (key != Key::Count) { keyboardCurrent.set((size_t)key, false); }
                 break;
             }
 
             case SDL_EVENT_MOUSE_MOTION:
             {
-                mouse      = {event.motion.x   , event.motion.y};
-                mouseDelta = {event.motion.xrel, event.motion.yrel};
+                mouse.position = {event.motion.x   , event.motion.y};
+                mouse.delta    = {event.motion.xrel, event.motion.yrel};
+                break;
+            }
+
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            {
+                MouseButton button = FromSDLButton(event.button.button);
+                if (button != MouseButton::Count) { mouse.current.set((size_t)button, true); }
+                break;
+            }
+
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+            {
+                MouseButton button = FromSDLButton(event.button.button);
+                if (button != MouseButton::Count) { mouse.current.set((size_t)button, false); }
+                break;
+            }
+
+            case SDL_EVENT_MOUSE_WHEEL:
+            {
+                mouse.wheelDelta += glm::ivec2 {event.wheel.x, event.wheel.y};
                 break;
             }
 
@@ -80,7 +114,9 @@ namespace TerranEngine
 
     void Input::NewFrame() noexcept
     {
-        previous   = current;
-        mouseDelta = {0, 0};
+        keyboardPrevious = keyboardCurrent;
+        mouse.previous   = mouse.current;
+        mouse.delta      = {0, 0};
+        mouse.wheelDelta = {0, 0};
     }
 }

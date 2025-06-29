@@ -12,6 +12,7 @@ namespace TerranEngine
         int         nativeHeight {270};
         int         windowWidth  {1280};
         int         windowHeight {720};
+        bool        fullscreen   {true};
         bool        resizable    {false};
         bool        vsync        {false};
         bool        growViewport {true};
